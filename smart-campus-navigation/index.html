@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CBIT Smart Campus Navigation System</title>
+    
+    <!-- Leaflet CSS -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    
+    <!-- Leaflet Routing Machine CSS -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet-routing-machine@3.2.12/dist/leaflet-routing-machine.css" />
+    
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="styles.css">
+    
+    <!-- Font Awesome for icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+    <!-- Header -->
+    <header class="header">
+        <div class="header-content">
+            <div class="logo-section">
+                <i class="fas fa-map-marked-alt"></i>
+                <h1>CBIT Smart Campus Navigator</h1>
+            </div>
+            <div class="header-info">
+                <span class="location-badge">
+                    <i class="fas fa-location-dot"></i>
+                    Kokapet, Hyderabad
+                </span>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Container -->
+    <div class="main-container">
+        <!-- Sidebar -->
+        <aside class="sidebar">
+            <!-- Search Section -->
+            <div class="search-section">
+                <div class="search-box">
+                    <input type="text" id="searchInput" placeholder="Search buildings, labs, offices..." class="search-input">
+                    <button id="searchBtn" class="search-btn">
+                        <i class="fas fa-search"></i>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Quick Access Emergency -->
+            <div class="emergency-section">
+                <h3><i class="fas fa-exclamation-triangle"></i> Emergency Services</h3>
+                <div class="emergency-buttons">
+                    <button class="emergency-btn" data-location="medical">
+                        <i class="fas fa-hospital"></i>
+                        <span>Medical Center</span>
+                    </button>
+                    <button class="emergency-btn" data-location="security">
+                        <i class="fas fa-shield-alt"></i>
+                        <span>Security Office</span>
+                    </button>
+                    <button class="emergency-btn" data-location="fire">
+                        <i class="fas fa-fire-extinguisher"></i>
+                        <span>Fire Safety</span>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Category Filters -->
+            <div class="filter-section">
+                <h3><i class="fas fa-filter"></i> Filter by Category</h3>
+                <div class="filter-buttons">
+                    <button class="filter-btn active" data-category="all">All</button>
+                    <button class="filter-btn" data-category="academic">Academic</button>
+                    <button class="filter-btn" data-category="administrative">Administrative</button>
+                    <button class="filter-btn" data-category="facilities">Facilities</button>
+                    <button class="filter-btn" data-category="hostel">Hostels</button>
+                    <button class="filter-btn" data-category="sports">Sports</button>
+                    <button class="filter-btn" data-category="food">Food Courts</button>
+                </div>
+            </div>
+
+            <!-- Locations List -->
+            <div class="locations-section">
+                <h3><i class="fas fa-building"></i> Campus Locations</h3>
+                <div id="locationsList" class="locations-list">
+                    <!-- Dynamic content will be loaded here -->
+                </div>
+            </div>
+
+            <!-- Navigation Info -->
+            <div class="navigation-info" id="navigationInfo" style="display: none;">
+                <h3><i class="fas fa-route"></i> Navigation Details</h3>
+                <div class="nav-details">
+                    <div class="nav-item">
+                        <strong>From:</strong> <span id="navFrom">-</span>
+                    </div>
+                    <div class="nav-item">
+                        <strong>To:</strong> <span id="navTo">-</span>
+                    </div>
+                    <div class="nav-item">
+                        <strong>Distance:</strong> <span id="navDistance">-</span>
+                    </div>
+                    <div class="nav-item">
+                        <strong>Est. Time:</strong> <span id="navTime">-</span>
+                    </div>
+                </div>
+                <button id="clearRoute" class="clear-route-btn">
+                    <i class="fas fa-times"></i> Clear Route
+                </button>
+            </div>
+        </aside>
+
+        <!-- Map Container -->
+        <main class="map-container">
+            <div id="map"></div>
+            
+            <!-- Map Controls -->
+            <div class="map-controls">
+                <button id="locateMe" class="control-btn" title="Find My Location">
+                    <i class="fas fa-crosshairs"></i>
+                </button>
+                <button id="resetView" class="control-btn" title="Reset View">
+                    <i class="fas fa-home"></i>
+                </button>
+                <button id="toggleFullscreen" class="control-btn" title="Fullscreen">
+                    <i class="fas fa-expand"></i>
+                </button>
+            </div>
+
+            <!-- Legend -->
+            <div class="map-legend">
+                <h4>Legend</h4>
+                <div class="legend-items">
+                    <div class="legend-item">
+                        <span class="legend-icon academic"></span>
+                        <span>Academic Buildings</span>
+                    </div>
+                    <div class="legend-item">
+                        <span class="legend-icon administrative"></span>
+                        <span>Administrative</span>
+                    </div>
+                    <div class="legend-item">
+                        <span class="legend-icon facilities"></span>
+                        <span>Facilities</span>
+                    </div>
+                    <div class="legend-item">
+                        <span class="legend-icon emergency"></span>
+                        <span>Emergency Services</span>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- Location Details Modal -->
+    <div id="locationModal" class="modal">
+        <div class="modal-content">
+            <span class="close-modal">&times;</span>
+            <div id="modalBody">
+                <!-- Dynamic content -->
+            </div>
+        </div>
+    </div>
+
+    <!-- Scripts -->
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    <script src="https://unpkg.com/leaflet-routing-machine@3.2.12/dist/leaflet-routing-machine.js"></script>
+    <script src="campus-data.js"></script>
+    <script src="app.js"></script>
+</body>
+</html>
